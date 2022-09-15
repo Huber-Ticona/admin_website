@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block encabezado %}
+<link rel="stylesheet" href="{{url_for('static', filename= 'css/lista_productos.css')}}">
+<title>Lista Productos</title>
+
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+
+  
+
+  <h1>Lista Productos</h1>
+
+
+  <table class="table table-responsive">
+    <thead class="thead-dark">
+      <tr class="">
+        <th scope="">ID</th>
+        <th class="" scope="col">Nombre producto</th>
+        <th class="aux" scope="col">Categoria</th>
+        <th class="aux" scope="col">Precio</th>
+        <th class="" scope="col">Url imagen</th>
+        <th class="" scope="col">Imagen Extra</th>
+        <th class="" scope="col">Accion</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpo-tabla-productos">
+  
+    </tbody>
+
+  </table>
+
+  {% if productos %}
+      <script>
+        var lista_productos = {{productos|safe}}
+        console.log(lista_productos)
+        for(let i = 0; i< lista_productos.length ; i++){
+          item = lista_productos[i]
+          detalle = JSON.parse(item[5])
+          
+          let fila1 = '<tr class=""><td class="">'+ item[0] + '</td><td class="name">'+ item[1] +'</td><td><div id="cat">'+ item[2] + '</div></td><td class="price">'+ item[3] + '</td>'
+          let fila2 = '<td><div class="extra"><img class="img-fluid" src= "/imagen-producto/'+ item[4] + '"></div></td>'
+          let contenido_imagenes = '<td><div class="extra2"><div class="extra3">'
+
+          for(let x = 0;x < detalle.length; x ++){
+            contenido_imagenes = contenido_imagenes + '<img class="img-fluid" src= "/imagen-producto/'+ detalle[x] + '">'
+          }
+          contenido_imagenes = contenido_imagenes + '</div></div></td>'
+
+          let fila4 = '<td class="controles"><button class="btn btn-primary" onclick="modificar('+ item[0] +')"><i class="fa-solid fa-pen-to-square"></i></button>'
+          let fila5 = ' <button class="btn btn-primary" onclick="eliminar('+ item[0] + ')"><i class="fa-solid fa-trash"></i></button></td></tr>'
+          $('#cuerpo-tabla-productos').append(fila1 + fila2 + contenido_imagenes + fila4 + fila5)
+        }
+        
+
+        
+      </script>
+  {% endif%}
+
+  <script>
+    function modificar(id){
+      console.log('modificando producto: ' + id )
+      window.location.href = "/modificar/producto/" + id;
+    }
+    function eliminar(id) {
+        var userselection = confirm("¿Seguro desea eliminar el producto seleccionado?");
+        if (userselection == true) {
+          let url = '/eliminar/producto/' + id.toString()
+          $.ajax({
+            url: url,
+            type: 'get',
+            contentType: "application/json; charset=utf-8",
+            success: function (resp) {
+              console.log(resp)
+              alert(resp.mensaje)
+              window.location.reload()
+            }
+          })
+        }
+      }
+  </script>
+</div>
+{% endblock %}

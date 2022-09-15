@@ -1,0 +1,9 @@
+
+{% if imagenes %}
+    {% for item in imagenes %}
+    <div class="item-lista">
+        <input type="image"  class="img-fluid" alt="Responsive image" id="item-lista-imagen" src="/imagen-producto/{{item}}" onfocus="aceptar_imagen('{{item}}')"/>
+    </div>
+    
+    {% endfor %}
+{% endif %}

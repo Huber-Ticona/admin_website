@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+{% block encabezado %}
+<title>Agregar Imagen</title>
+<style>
+    .contenedor1{
+        height: 300px ;
+        margin-top: 10px ;
+        margin-bottom: 10px ;
+    }
+</style>
+{% endblock %}
+
+
+
+{% block contenido %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="text-center">
+    {% for message in messages %}
+      <div class="alert alert-primary" role="alert">
+        {{message}}
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="text-center">
+    <div class="contenedor1">
+        <h3>Seleccione una imagen</h3>
+        <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Subir>
+        </form>
+        <h1> jQuery detect breakpoint change once </h1>
+
+    <div class="test">Js change: </div>
+    </div>
+</div>
+
+<script>
+    var $window = $(window);
+    var $test = $('.test');
+    var breakpoint = 992;
+    var last = $window.width() > breakpoint;
+
+    $window.on('resize', function(){
+    var wWwidth = $window.width();
+    var isLarger = wWwidth > breakpoint
+    
+    if(last !== isLarger) {
+        if(isLarger) {
+        onLargerChange();
+        } else {
+        onSmallerChange();
+        }
+        last = isLarger;
+    }
+    });
+
+    function onLargerChange() {
+    $test.append('larger ');
+    }
+    
+    function onSmallerChange() {
+    $test.append('smaller ');
+    }
+</script>
+
+
+
+
+{% endblock %}

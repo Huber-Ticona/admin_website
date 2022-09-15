@@ -1,0 +1,531 @@
+{% extends 'layout.html' %}
+
+{% block encabezado %}
+    <title>Producto Agregar</title>
+    <link rel="stylesheet" href="{{url_for('static', filename= 'css/agregar_producto.css')}}">
+    
+
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenedor-mensajes">
+
+</div>
+
+    <div class="modal fade " data-keyboard="false" tabindex="-1" id="modal_imagenes">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 style="font-size: 15px;">Seleccione una imagen</h1>
+                    <button class="btn btn-secondary" onclick="cerrar_modal()">cerrar</button>
+                </div>
+                <div class="modal-body p-0 m-0" id="lista_imagenes">
+                    
+                </div>
+                <div class="modal-footer">
+                    <div class="abajo">
+                        <p>imagen seleccionada:</p>
+                        <input type="text" id="nombre_img_seleccionada" style="display: none;" disabled>
+                        <img id="img_seleccionada" src=""  class="img-fluid" alt="" height="50" width="50">
+                    </div>
+                    <button class="btn btn-secondary" onclick="enviar_imagen()">Aceptar</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    
+    <div class="container" id="contenedor">
+        
+        <div class="text-center">
+        {% if producto %}
+        <strong>MODIFICAR PRODUCTO</strong>
+        {% else %}
+        <strong>AGREGAR NUEVO PRODUCTO</strong>
+        {% endif %}
+        </div>
+        {% if producto %}
+        
+        {% else %}
+
+        {% endif %}
+
+        
+        <div class="row">
+            <div class="col" style="border: 1px solid yellow;">
+                <div class="formulario">
+                    <p>Datos del producto</p>
+    
+                    <!-- NOMBRE DEL PRODUCTO -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Nombre del producto</span>
+                        </div>
+                        {% if producto %}
+                        <input type="text" class="form-control" id="nombre_producto" value="{{producto[2]}}">
+                        {% else %}
+                        <input type="text" class="form-control" id="nombre_producto" placeholder="Ej: melamina vesto 100x200cm">
+                        {% endif %}
+                    </div>
+                    
+                    <!-- CATEGORIA -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Categoria</span>
+                        </div>
+                        <select class="custom-select" id="categoria_producto">
+                            
+                        </select>
+                    </div>
+                    <!-- PRECIO DEL PRODUCTO -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Precio $</span>
+                        </div>
+                        {% if producto %}
+                        <input type="number" min="0" class="form-control" id="precio_producto" value="{{producto[5]|int}}">
+                        {% else %}
+                        <input type="number" min="0" class="form-control" id="precio_producto">
+                        {% endif %}
+                        
+                    </div>
+    
+                    <!-- IMAGEN DEL PRODUCTO -->
+    
+                    <div class="input-group imagen mb-3" >
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroupFileAddon01">Imagen del producto</span>
+                        </div>
+                        {% if producto %}
+                        <input type="text" class="form-control" id="nombre_imagen_producto" value="{{producto[6]}}" disabled>
+                        {% else %}
+                        <input type="text" class="form-control" id="nombre_imagen_producto" placeholder="..." disabled>
+                        {% endif %}
+                        
+
+                        <div class="input-group-prepend">
+                            
+                            <div class="contenedor_imagen_miniatura">
+                                {% if producto %}
+                                <img id="mini_imagen_0" src="/imagen-producto/{{producto[6]}}" class="img-fluid" alt="Responsive image">             
+                                {% else %}
+                                <img id="mini_imagen_0" src="/imagen-producto/miniatura_vista_previa.jpg" class="img-fluid" alt="Responsive image">                                    
+                                {% endif %}
+                                </div>
+                        </div>
+                        
+                        <div class="input-group-prepend">
+                            <button class="btn btn-secondary" type="button"  onclick="mostrar_imagenes(0)">Seleccionar imagen</button>
+                        </div>
+                    </div>
+    
+                    <!-- MAS IMAGENES DEL PRODUCTO -->
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" id="mas_imagenes">
+                              <label class="form-check-label" for="gridCheck">
+                                Mas imagenes
+                              </label>
+                            </div>
+                          </div>
+                            <div class="form-group col-md-4" id="label-nro-imagenes" >
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">N° Imagenes</span>
+                                    </div>
+                                    <input type="number" class="form-control" id="nro_imagenes">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4" id="btn-rellenar-imagenes">
+                                <div class="input-group mb-3">
+                                    <button class="btn btn-primary" onclick="agregar_campos_imagenes()">Rellenar</button>
+                                </div>
+                            </div>
+                    </div>
+
+                    <div class="lista-imagenes">
+                    {% if producto and producto[7] != '[]' %}
+                        <script>
+                            let array_imagenes = JSON.parse('{{producto[7]|safe}}')
+                            
+                            var cantidad = array_imagenes.length // VARIABLE GLOBAL CANTIDAD IMAGENES EXTRA
+                            console.log(cantidad)
+                            if(cantidad > 0){
+                                $('.lista-imagenes').empty()
+                                console.log('agregando campos ' + cantidad.toString() + 'campos ...')
+                                for(let i = 0; i < cantidad ; i ++){
+                                    txt1 = '<div class="input-group imagen mb-3" id="campo_extra_'+ (i+1).toString() +'"><div class="input-group-prepend"><span class="input-group-text">Imagen extra '+(i+1).toString() +'</span>'
+                                    txt2 = '</div><input type="text" class="form-control" id="imagen_extra_'+ (i+1).toString() +'" value="'+array_imagenes[i]+'" disabled>'
+                                    txt3 = '<div class="contenedor_imagen_miniatura"><img id="mini_imagen_'+(i+1).toString() +'" src="/imagen-producto/'
+                                    txt4 = array_imagenes[i] + '" class="img-fluid" alt="Responsive image"></div>'
+                                    txt5 = '<div class="input-group-prepend"><button class="btn btn-secondary" type="button" '
+                                    txt6 = 'onclick="mostrar_imagenes('+(i+1).toString() +')">Seleccionar imagen</button><button id="cerrar" onclick="eliminar_campo_extra('+ (i+1).toString() +')">X</button></div></div>'
+                                    $('.lista-imagenes').append(txt1+txt2+txt3+txt4+ txt5 + txt6)
+                                }
+                            }
+                        </script>
+                    {% else %}
+                    <script>
+                        var cantidad = 0 // VARIABLE GLOBAL CANTIDAD IMAGENES EXTRA
+                    </script>
+                    {% endif %}
+                    </div>
+                      
+
+                      <!-- DESCRIPCION -->
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">Descripción</span>
+                        </div>
+                        {% if producto %}
+                            {% if producto[3] != None %}
+                            <textarea class="form-control" aria-label="With textarea" id="descripcion_producto">{{producto[3]}}</textarea>
+                            {%else%}
+                            <textarea class="form-control" aria-label="With textarea" id="descripcion_producto"></textarea>                            
+                            {%endif%}
+                        {% else %}
+                        <textarea class="form-control" aria-label="With textarea" id="descripcion_producto"></textarea>
+                        {% endif %}
+                        
+                      </div>
+    
+               
+    
+    
+    
+                <div class="col text-center">
+                    <br>
+                    <button id="btn_registrar"  type="submit" class="btn btn-primary" onclick="enviar_producto()">Ingresar</button>
+                    <button id="btn_modificar" type="submit" class="btn btn-primary" onclick="guardar_cambios()" >Guardar Cambios</button>
+                </div>
+            </div>
+    
+        </div>
+    <!-- SCRIP NECESARIO AL MODIFICAR PRODUCTO -->
+    {% if producto %}
+    <script>
+        $('#btn_registrar').css('display','none')
+        var id_categoria = parseInt('{{producto[4]}}')
+        var imagenes_extras = JSON.parse('{{producto[7]|safe}}')
+        var producto_id = '{{producto[0]}}'
+        console.log(id_categoria)
+        console.log(imagenes_extras)
+        console.log(producto_id)
+
+        
+    </script>
+    {% else %}
+    <script>
+        $('#btn_modificar').css('display','none')
+    </script>
+    {% endif %}  
+
+    <!-- SCRIP NECESARIO PARA CARGAR LAS CATEGORIAS PRODUCTO -->
+    {% if categorias %}
+      <script>
+        var lista_categorias = {{categorias|safe}}
+        console.log(lista_categorias)
+
+        let defecto = '<option value="" selected>Escoger categoria ...</option>'
+        $('#categoria_producto').append(defecto)
+        var check = false
+        if(typeof id_categoria !== 'undefined'){
+            check = true
+        }
+
+        for(let i = 0; i<lista_categorias.length ; i++){
+          let item = lista_categorias[i]
+          const regex = /"/g;
+          var detalle = item[1].replace(regex, '' )
+
+          if (check){
+            // LA VARIABLE ESTA DEFINIDA
+            if(id_categoria == item[0]){
+                var option = '<option value="'+item[0]+'" selected>'+ detalle +'</option>'
+            }else{
+                var option = '<option value="'+item[0]+'">'+ detalle +'</option>'
+            }
+          }
+          else{
+            var option = '<option value="'+item[0]+'">'+ detalle +'</option>'
+          }
+          $('#categoria_producto').append(option)
+          
+        }
+      </script>
+    {% else %}
+      <script>
+        let new_defecto = '<option value="" selected>No existen categorias registradas</option>'
+        $('#categoria_producto').append(new_defecto)
+      </script>
+    {% endif%}
+    
+    </div>
+    </div>
+
+    
+    <script>
+        // variables globales
+        var nro_input = 0
+        function cerrar_modal(){
+            $('#modal_imagenes').modal('hide')
+        }
+        function mostrar_imagenes(input){
+            nro_input = input
+            console.log('mostrando imagenes para input' , input)
+            $('#lista_imagenes').empty()
+            $('#img_seleccionada').attr('src','')
+            $('#nombre_img_seleccionada').val('')
+            
+            url = '/imagenes'
+            $.post( url , function(resp){
+                if(resp){
+                    console.log('ahi respuesta')
+                    $('#lista_imagenes').append(resp)
+                }
+                else{
+                    console.log('No ahi respuesta de imagenes')
+                    $('#lista_imagenes').append('No ahi imagenes')
+                }
+            })
+
+            
+
+            $('#modal_imagenes').modal('show')
+            
+        }
+        
+        //DETECTAR IMAGEN SELECIONADA X FOCUS
+        function aceptar_imagen(nombre_imagen){
+            $('#img_seleccionada').attr('src','/imagen-producto/' + nombre_imagen )
+            $('#nombre_img_seleccionada').val(nombre_imagen)
+
+
+        }
+        function enviar_imagen(){
+            let nombre_imagen= $('#nombre_img_seleccionada').val()
+            
+            if(nombre_imagen != ''){
+                console.log(nombre_imagen)
+                
+                if(nro_input == 0){
+                    $('#mini_imagen_0').attr("src", "/imagen-producto/" + nombre_imagen )
+                    $('#nombre_imagen_producto').val(nombre_imagen)
+                }
+                else{
+                    let aux = nro_input.toString()
+                    $('#imagen_extra_'+aux).val(nombre_imagen)
+                    $('#mini_imagen_'+aux).attr("src", "/imagen-producto/" + nombre_imagen )
+                }
+                cerrar_modal()
+            }else{
+                console.log('imagen vacia')
+                alert('Seleccione una imagen antes de continuar')
+            }
+        }
+        /*
+        function aceptar_imagen(nombre_imagen){
+            console.log(nombre_imagen , nro_input)
+            $('#modal_imagenes').modal('hide')
+            
+            if(nro_input == 0){
+                $('#mini_imagen_0').attr("src", "/imagen-producto/" + nombre_imagen )
+                $('#nombre_imagen_producto').val(nombre_imagen)
+            }
+            else{
+                let aux = nro_input.toString()
+                $('#imagen_extra_'+aux).val(nombre_imagen)
+                $('#mini_imagen_'+aux).attr("src", "/imagen-producto/" + nombre_imagen )
+            }
+            
+        }
+*/
+        $('#mas_imagenes').change(function(){
+            if(this.checked) {
+                console.log('mas imagenes si')
+                $('#label-nro-imagenes').css('display', 'block')
+                $('#btn-rellenar-imagenes').css('display', 'block')
+
+            }else{
+                console.log('mas imagenes NO')
+                $('#label-nro-imagenes').css('display', 'none')
+                $('#btn-rellenar-imagenes').css('display', 'none')
+                $('.lista-imagenes').empty()
+            }
+        })
+
+        // FUNCIONES 
+
+        function agregar_campos_imagenes(){
+            console.log('cantidad antes: ',cantidad)
+            if(cantidad == 0){
+                
+            }
+            let nueva_cantidad = parseInt($('#nro_imagenes').val())
+            console.log('cantidad despues: ',cantidad)
+            
+            if(nueva_cantidad > 0){
+                //$('.lista-imagenes').empty()
+                console.log('agregando campos ' + nueva_cantidad.toString() + 'campos ...')
+                for(let i = cantidad; i < (cantidad + nueva_cantidad) ; i ++){
+
+                    txt1 = '<div class="input-group imagen mb-3" id="campo_extra_'+ (i+1).toString() +'"><div class="input-group-prepend"><span class="input-group-text">Imagen extra '+(i+1).toString() +'</span>'
+                    txt2 = '</div><input type="text" class="form-control" id="imagen_extra_'+ (i+1).toString() +'" disabled>'
+                    txt3 = '<div class="contenedor_imagen_miniatura"><img id="mini_imagen_'+(i+1).toString() +'" src="/imagen-producto/'
+                    txt4 = 'miniatura_vista_previa.jpg" class="img-fluid" alt="Responsive image"></div>'
+                    txt5 = '<div class="input-group-prepend"><button class="btn btn-secondary" type="button" '
+                    txt6 = 'onclick="mostrar_imagenes('+(i+1).toString() +')">Seleccionar imagen</button><button id="cerrar" onclick="eliminar_campo_extra('+ (i+1).toString() +')">X</button></div></div>'
+                    $('.lista-imagenes').append(txt1+txt2+txt3+txt4+ txt5 + txt6)
+                }
+                cantidad = cantidad + nueva_cantidad
+            }
+            else{ console.log('Ingrese un numero superior a 0')}
+        }
+        function eliminar_campo_extra(nro_campo){
+
+            console.log('eliminando imagen extra', nro_campo)
+            $('#campo_extra_'+ nro_campo.toString()).css('display','none')
+            $('#imagen_extra_' + nro_campo.toString()).val("")
+
+
+        }
+
+        function enviar_producto(){
+            let nombre_producto = $('#nombre_producto').val() 
+            let precio_producto = $('#precio_producto').val() 
+            let categoria_producto = $('#categoria_producto').val() 
+            let nombre_imagen_producto = $('#nombre_imagen_producto').val() 
+            let descripcion_producto = $('#descripcion_producto').val()
+
+            let imagen_extra = []
+
+            console.log(cantidad)
+            if( cantidad != 0 ){
+                console.log('existe cantidad')
+                let imagenes = []
+                for(let i = 0; i <cantidad ; i++){
+                    let imagen = $('#imagen_extra_' + (i+1).toString()).val()
+
+                    if(imagen != ""){
+                        imagenes.push(imagen)
+                    }
+                    else{
+                        console.log('imagen eliminada')
+                    }
+                }
+                imagen_extra = imagenes
+            }
+
+            imagen_extra = JSON.stringify(imagen_extra)
+
+            let exito = false
+
+
+            console.log('nombre producto : ' + nombre_producto)
+            console.log('categoria :' + categoria_producto)
+            console.log('precio prodUcuto :'+precio_producto.toString() )
+            console.log('nombre_imagen producto :' + nombre_imagen_producto)
+            console.log('imagenes extras: ', imagen_extra)
+            console.log('DESCRIPCION: ', descripcion_producto)
+
+            if( nombre_producto != '' && precio_producto != '' && categoria_producto != ''){
+                exito = true
+            }
+            
+
+            if(exito){
+                dato = JSON.stringify({"nombre_producto":nombre_producto, "precio_producto":precio_producto, "categoria_producto":categoria_producto, "url_imagen":nombre_imagen_producto,"imagen_extra":imagen_extra, "descripcion_producto":descripcion_producto.toString() })
+
+                $.ajax({
+                url: "{{url_for('agregar_producto')}}",
+                type: 'post',
+                contentType: "application/json; charset=utf-8",
+                data: dato,
+                success: function(resp){
+                    console.log(resp)
+                    if(resp.data){
+                        console.log('ahi respuesta')
+                        //msj = '<div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">&times;</button>'+ resp.mensaje +'</div>'
+                        //$('.contenedor-mensajes').append(msj)
+                        alert(resp.mensaje)
+                        window.location.href = '{{url_for("visualizar_producto")}}'
+                    }
+                    
+                }
+                
+            });
+            }else{
+                alert('algun dato erroneo, revise sus datos igresados')
+            }
+            
+        }
+        function guardar_cambios(){
+            console.log('--------- MODIFICAR ---------')
+            let nombre_producto = $('#nombre_producto').val() 
+            let precio_producto = $('#precio_producto').val() 
+            let categoria_producto = $('#categoria_producto').val() 
+            let nombre_imagen_producto = $('#nombre_imagen_producto').val() 
+            let descripcion_producto = $('#descripcion_producto').val()
+            
+            let imagen_extra = []
+
+            let exito = false
+            console.log('cantidad ', cantidad)
+            if( cantidad != 0 ){
+                let imagenes = []
+                for(let i = 0; i <cantidad ; i++){
+                    let imagen = $('#imagen_extra_' + (i+1).toString()).val()
+                    if(imagen != ""){
+                        imagenes.push(imagen)
+                    }
+                }
+                imagen_extra = imagenes
+            }
+            imagen_extra = JSON.stringify(imagen_extra)
+            
+            console.log('nombre producto : ' + nombre_producto)
+            console.log('categoria :' + categoria_producto)
+            console.log('precio prodUcuto :'+precio_producto.toString() )
+            console.log('nombre_imagen producto :' + nombre_imagen_producto)
+            console.log('imagenes extras: ', imagen_extra)
+            console.log('DESCRIPCION: ', descripcion_producto)
+
+            if( nombre_producto != '' && precio_producto != '' && categoria_producto != ''){
+                exito = true
+            }
+            
+
+            if(exito){
+                let url = '/modificar/producto/'+ producto_id
+
+                let dato = JSON.stringify({
+                "nombre_producto":nombre_producto,
+                "precio_producto":precio_producto,
+                "categoria_producto":categoria_producto,
+                "url_imagen":nombre_imagen_producto,
+                "imagen_extra":imagen_extra, 
+                "descripcion_producto":descripcion_producto
+                } )
+                console.log(dato)
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    contentType: "application/json; charset=utf-8",
+                    data: dato,
+                    success: function(resp){
+                        console.log(resp)
+                        alert(resp.mensaje)
+                        window.location.href = '{{url_for("visualizar_producto")}}'
+                    }
+                })
+            }
+            console.log('-------------- END -------------')
+        }
+    
+    </script>
+    
+{% endblock %}

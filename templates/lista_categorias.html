@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block encabezado %}
+<link rel="stylesheet" href="{{url_for('static', filename= 'css/inicio.css')}}">
+<title>Lista Categorias</title>
+
+
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+
+  
+
+  <h1>lista categorias superiores</h1>
+
+
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nombre categoria</th>
+        <th scope="col">Accion</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpo-tabla-categorias">
+  
+    </tbody>
+  </table>
+  <br>
+  <h2>Lista categorias inferiores</h2>
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nombre categoria</th>
+        <th scope="col">ID superior(vinculo)</th>
+        <th scope="col">Accion</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpo-tabla-categorias-2">
+  
+    </tbody>
+  </table>
+
+
+  {% if categorias %}
+      <script>
+        var lista_categorias = {{categorias|safe}}
+        console.log(lista_categorias)
+        for(let i = 0; i<lista_categorias.length ; i++){
+          item = lista_categorias[i]
+          detalle = JSON.parse(item[1])
+
+          if(detalle.tipo_categoria == 'superior'){
+            let fila1 = '<tr><td>'+ item[0] + '</td><td>'+ detalle.nombre_categoria+'</td><td>'
+            let fila2 = '<a class="btn btn-primary" href="/categoria/modificar/'+ item[0] +'">Modificar</a>'
+            let fila3 = ' <button class="btn btn-primary" onclick="eliminar_categoria('+ item[0] + ')">Eliminar</button></td></tr>'
+            $('#cuerpo-tabla-categorias').append(fila1 + fila2 + fila3)
+          }
+          else{
+              let fila1 = '<tr><td>'+ item[0] + '</td><td>'+ detalle.nombre_categoria+'</td><td>'+ detalle.id_superior+'</td><td>'
+              let fila2 = '<a class="btn btn-primary" href="/categoria/modificar/'+ item[0] +'">Modificar</a>'
+              let fila3 = ' <button class="btn btn-primary" onclick="eliminar_categoria('+ item[0] + ')">Eliminar</button></td></tr>'
+              $('#cuerpo-tabla-categorias-2').append(fila1 + fila2 + fila3)
+          }
+        }        
+      </script>
+  {% endif%}
+
+
+  <script>
+    function modificar(id){
+
+    }
+    function eliminar_categoria(id){
+      var userselection = confirm("¿Seguro eliminar la categoria seleccionada?");
+      if (userselection == true){
+        let url = "/categoria/eliminar/"+ id
+        $.get(url, function xd(resp){
+          console.log(resp)
+        });
+        }
+    }
+  </script>
+</div>
+
+{% endblock %}

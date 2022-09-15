@@ -1,0 +1,40 @@
+#cuerpo-tabla-productos{
+
+}
+thead th{
+    font-size: 16px;
+}
+.extra{
+    height: 100px;
+    width: 100px;
+}
+.extra2{
+    
+}
+.extra3{
+    min-width: 35vw;
+    border: 1px solid red;
+    display: flex;
+    gap: 0px 15px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.extra2 img{
+    height: 60px;
+    width: 60px;
+}
+.controles{
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 3px;
+}
+#cat{
+    max-height: 60px;
+    max-width: 60px;
+}
+@media(max-width:762px){
+    thead th{
+        font-size: 12px;
+    }
+}

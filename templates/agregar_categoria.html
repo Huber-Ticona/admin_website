@@ -1,0 +1,215 @@
+{% extends 'layout.html' %}
+
+{% block encabezado %}
+    <title>Categoria Agregar</title>
+    <link rel="stylesheet" href="{{url_for('static', filename= 'css/agregar_categoria.css')}}">
+
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenedor-mensajes">
+
+</div>
+
+    <div class="container" id="contenedor">
+        <div class="row">
+            <div class="col-md" id="contenedor_inferior" style="border: 1px solid yellow;">
+                <div class="formulario">
+                    <p>Datos Categoria inferior</p>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Categoria superior relacionada</span>
+                        </div>
+                        <select class="custom-select" id="id_categoria_superior">
+                            {% if superiores %}
+                                
+                                <option value="" selected>Seleccione una categoria superior</option>
+                                {% for item in superiores%}
+                                    {% set nombre_categoria = item[1]%}
+                                    {% if nombre_categoria != None %}
+                                        <option value="{{item[0]}}">{{item[1].replace('"','')}}</option>
+                                    {% endif%}
+                                {% endfor %}
+
+                            {% else %}
+                            <option value="" selected>No se han registrado superiores...</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <!-- NOMBRE DEL CATEGORIA -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Nombre de la categoria</span>
+                        </div>
+                        <input type="text" class="form-control" id="nombre_categoria_inferior" placeholder="Ej: trupan">
+                    </div>
+
+                    <!-- IMAGEN DE la categoria 
+        
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroupFileAddon01">Imagen de la categoria</span>
+                            </div>
+                            <input type="text" class="form-control" id="nombre_imagen_categoria" placeholder="Ej: xxxxx.jpg">
+                        </div>-->
+    
+    
+                    <div class="col text-center">
+                        <br>
+                        <button id="btn-agregar-inferior" type="submit" class="btn btn-primary" onclick="enviar_categoria_inferior('agregar')">Agregar Categoria</button>
+                        <button id="btn-modificar-inferior" type="submit" class="btn btn-primary" onclick="enviar_categoria_inferior('modificar')">Modificar Categoria</button>
+                    </div>
+                </div>
+    
+            </div>
+            <div class="col-md" id="contenedor_superior" style="border: 1px solid yellow;">
+                <div class="formulario">
+                    <p>Datos Categoria superior</p>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Nombre de la categoria</span>
+                        </div>
+                        <input type="text" class="form-control" id="nombre_categoria_superior" placeholder="Ej: trupan">
+                    </div>
+
+                    <div class="col text-center">
+                        <br>
+                        <button id="btn-agregar-superior" type="submit" class="btn btn-primary" onclick="enviar_categoria_superior('agregar')">Agregar
+                            Categoria</button>
+                        <button id="btn-modificar-superior" type="submit" class="btn btn-primary" onclick="enviar_categoria_superior('modificar')">Modificar Categoria</button>
+                    </div>
+                </div>
+            </div>
+
+            {% if categoria %} 
+            
+            <script>
+                //SI EXISTE => VISTA MODIFICAR
+                $('#btn-agregar-superior').css('display', 'none')
+                $('#btn-agregar-inferior').css('display', 'none')
+
+                aux = {{categoria|safe}}
+                console.log(aux)
+                detalle = JSON.parse(aux[1])
+                if( detalle.tipo_categoria == 'inferior'){
+                    console.log('inferior')
+                    $('#nombre_categoria_inferior').val(detalle.nombre_categoria)
+                    
+                    $("#id_categoria_superior").val(detalle.id_superior).change();
+                    $("#contenedor_superior").css('display', 'none')
+
+                }
+                else if(detalle.tipo_categoria == 'superior'){
+                    console.log('superior')
+                    $('#nombre_categoria_superior').val(detalle.nombre_categoria)
+                    $("#contenedor_inferior").css('display', 'none')
+                }
+            </script>
+            {% else %}
+            <script>
+                //SI NO EXISTE => VISTA AGREGAR
+                console.log('vista agregar')
+                $('#btn-modificar-superior').css('display', 'none')
+                $('#btn-modificar-inferior').css('display', 'none')
+            </script>
+            {%endif%}
+
+
+            <script>
+
+                function enviar_categoria_inferior(vista) {
+                    let nombre_categoria = $('#nombre_categoria_inferior').val()
+                    nombre_categoria = nombre_categoria.toUpperCase() // SOLO ALMACENAR MAYUSCULAS
+                    let id_superior = $('#id_categoria_superior').val()
+                    let exito = false
+                    console.log('nombre categoria : ' + nombre_categoria)
+                    
+                    if (nombre_categoria != '') {
+                        exito = true
+                    }
+
+
+                    if (exito) {
+                        
+                        if(vista == 'modificar'){
+                            path = "/categoria/modificar/" + aux[0]
+                            dato = JSON.stringify({ "nombre_categoria": nombre_categoria , "tipo_categoria":"inferior" , "id_superior" : id_superior })
+                        }else{
+                            path = "{{url_for('agregar_categoria')}}"
+                            dato = JSON.stringify({ "nombre_categoria": nombre_categoria , "tipo_categoria":"inferior" , "id_superior" : id_superior })
+                        }
+                        $.ajax({
+                            url: path,
+                            type: 'post',
+                            contentType: "application/json; charset=utf-8",
+                            data: dato,
+                            success: function (resp) {
+                                console.log(resp)
+                                if (resp.data) {
+                                    console.log('ahi respuesta')
+                                    msj = '<div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">&times;</button>' + resp.mensaje + '</div>'
+                                    $('.contenedor-mensajes').append(msj)
+                                    $('#nombre_categoria').val('')
+                                }
+
+                            }
+
+                        });
+                    }
+                    else {
+                        alert('algun dato erroneo, revise sus datos igresados')
+                    }
+                }
+                function enviar_categoria_superior(vista) {
+                    let nombre_categoria = $('#nombre_categoria_superior').val()
+                    nombre_categoria = nombre_categoria.toUpperCase() // SOLO ALMACENAR MAYUSCULAS
+
+                    let exito = false
+                    console.log('nombre categoria : ' + nombre_categoria)
+
+                    if (nombre_categoria != '') {
+                        exito = true
+                    }
+                    
+
+                    if (exito) {
+                        if(vista == 'modificar'){
+                            path = "/categoria/modificar/" + aux[0]
+                        }else{
+                            path = "{{url_for('agregar_categoria')}}"
+                        }
+                        dato = JSON.stringify({ "nombre_categoria": nombre_categoria , "tipo_categoria":"superior" })
+
+                        $.ajax({
+                            url: path,
+                            type: 'post',
+                            contentType: "application/json; charset=utf-8",
+                            data: dato,
+                            success: function (resp) {
+                                console.log(resp)
+                                if (resp.data) {
+                                    console.log('ahi respuesta')
+                                    msj = '<div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">&times;</button>' + resp.mensaje + '</div>'
+                                    $('.contenedor-mensajes').append(msj)
+                                    $('#nombre_categoria').val('')
+                                }
+
+                            }
+
+                        });
+                    }
+                    else {
+                        alert('algun dato erroneo, revise sus datos igresados')
+                    }
+                }
+                
+
+            </script>
+        </div>
+    </div>
+
+
+        
+{% endblock %}
