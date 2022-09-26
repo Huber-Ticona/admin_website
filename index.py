@@ -1,4 +1,3 @@
-from os import abort
 from flask import Flask, flash, redirect, render_template, session, request, url_for,jsonify, json
 from database import obtener_conexion
 from modelos.categoria import Categoria
