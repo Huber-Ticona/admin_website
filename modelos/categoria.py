@@ -142,3 +142,83 @@ class Categoria():
             raise Exception(ex)
         finally:
             miConexion.close()
+
+    #-------- new version -------------
+
+    @classmethod
+    def registrar_categorias_v2(self,detalle):
+        miConexion = obtener_conexion()
+        try:
+            with miConexion.cursor() as cursor:
+                print('------ REGISTRANDO CATEGORIA v2------')
+                print(detalle)
+                sql = "INSERT INTO categoria2(nombre,nivel,padre_id) VALUES(%s,%s,%s)"
+
+                cursor.execute( sql , (detalle['nombre_categoria'] , detalle['nivel'],detalle['padre_id']))
+                print('-'*15)
+                miConexion.commit()
+                
+
+        except Exception as ex:
+            raise Exception(ex)
+        finally:
+            miConexion.close()
+    @classmethod
+    def obtener_categoriasv2(self):
+        miConexion = obtener_conexion()
+        try:
+            with miConexion.cursor() as cursor:
+                print('------ OBTENIENDO CATEGORIAS v2 ------')
+                sql = '''
+                with vista as(
+                select  c.categoria_id as id , c.nombre , b.nombre as padre,b.categoria_id as padre_id , c.nivel
+                from categoria2 c left join categoria2 b ON b.categoria_id = c.padre_id
+                )
+                select * from vista
+                order by nivel asc
+                '''
+                cursor.execute( sql )
+                resultado = cursor.fetchall()
+                #r = json.dumps(resultado)
+                #resultado = json.loads(r)
+                print(resultado)
+                
+                print('-'*15)
+                return resultado
+
+        except Exception as ex:
+            raise Exception(ex)
+        finally:
+            miConexion.close()
+
+    @classmethod
+    def obtener_categorias_arbol(self):
+        miConexion = obtener_conexion()
+        try:
+            with miConexion.cursor() as cursor:
+                print('------ OBTENIENDO CATEGORIAS v2 ------')
+                sql = '''
+                with vista as ( 
+                select c.categoria_id as padre_id , c.nombre as padre ,d.categoria_id  as hijo_id ,d.nombre as hijo
+                from categoria2 c inner join categoria2 d ON  c.categoria_id = d.padre_id
+                where c.nivel = 1
+                ),
+                vista2 as (
+                select c.* ,d.categoria_id , d.nombre 
+                from vista c inner join categoria2 d on c.hijo_id = d.padre_id
+                )
+                select concat(padre_id,',',hijo_id,',',categoria_id),concat(padre,' -> ',hijo,' -> ',nombre) from vista2 
+                '''
+                cursor.execute( sql )
+                resultado = cursor.fetchall()
+                #r = json.dumps(resultado)
+                #resultado = json.loads(r)
+                print(resultado)
+                
+                print('-'*15)
+                return resultado
+
+        except Exception as ex:
+            raise Exception(ex)
+        finally:
+            miConexion.close()

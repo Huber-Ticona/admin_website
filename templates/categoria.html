@@ -1,0 +1,42 @@
+<div class="row">
+    new version
+    <div class="col">
+       
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" >Categoria padre</span>
+            </div>
+            <select class="custom-select" id="cat_padre">
+            <option value="0" id="0" selected >Sin padre</option>
+            {% if categorias %}
+            {% for item in categorias %}
+            <!--(id, nombre_categoria, nombre_padre, padre_id, nivel_Categoria) -->
+            {% if item[2] != None %}
+            <option value="{{item[0]}}" id="{{item[4]}}">{{item[2]}}>{{item[1]}}</span></option>
+            {% else %}
+            <option value="{{item[0]}}" id="{{item[4]}}">(Raiz) > {{item[1]}}</span></option>
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            <option value="0" id="0" selected >Sin padre</option>
+            {% endif %}
+            </select>
+        </div>
+        
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" >Nombre categoria</span>
+            </div>
+            <input type="text" class="form-control"  id="cat_nombre" placeholder="Ej: cat">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" >Nivel calculado</span>
+            </div>
+            <input type="number" class="form-control"  id="cat_nivel" placeholder="0" disabled>
+        </div>
+
+        <button class="btn btn-secondary" onclick="regcat()">registrar</button>
+    </div>
+    
+</div>

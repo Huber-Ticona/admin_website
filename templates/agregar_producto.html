@@ -76,7 +76,13 @@
                             <span class="input-group-text" id="basic-addon1">Categoria</span>
                         </div>
                         <select class="custom-select" id="categoria_producto">
+                            <option value="" selected>Escoger categoria ...</option>
+                            {% if categorias %}
+                            {% for item in categorias %}
                             
+                            <option value={{item[0]}}>{{item[1]}}</option>
+                            {% endfor %}
+                            {% endif %}
                         </select>
                     </div>
                     <!-- PRECIO DEL PRODUCTO -->
@@ -225,7 +231,7 @@
     {% endif %}  
 
     <!-- SCRIP NECESARIO PARA CARGAR LAS CATEGORIAS PRODUCTO -->
-    {% if categorias %}
+    {#% if categorias %}
       <script>
         var lista_categorias = {{categorias|safe}}
         console.log(lista_categorias)
@@ -262,7 +268,7 @@
         let new_defecto = '<option value="" selected>No existen categorias registradas</option>'
         $('#categoria_producto').append(new_defecto)
       </script>
-    {% endif%}
+    {% endif%#}
     
     </div>
     </div>
@@ -397,7 +403,7 @@
         function enviar_producto(){
             let nombre_producto = $('#nombre_producto').val() 
             let precio_producto = $('#precio_producto').val() 
-            let categoria_producto = $('#categoria_producto').val() 
+            let categoria_producto = $('#categoria_producto').val()
             let nombre_imagen_producto = $('#nombre_imagen_producto').val() 
             let descripcion_producto = $('#descripcion_producto').val()
 
@@ -424,21 +430,22 @@
 
             let exito = false
 
-
             console.log('nombre producto : ' + nombre_producto)
-            console.log('categoria :' + categoria_producto)
+            console.log('categoria :' + categoria_producto)// MODIFICADA
+            console.log(categoria_producto)
             console.log('precio prodUcuto :'+precio_producto.toString() )
             console.log('nombre_imagen producto :' + nombre_imagen_producto)
             console.log('imagenes extras: ', imagen_extra)
-            console.log('DESCRIPCION: ', descripcion_producto)
 
+            console.log('DESCRIPCION: ', descripcion_producto)
+        
             if( nombre_producto != '' && precio_producto != '' && categoria_producto != ''){
                 exito = true
             }
             
 
             if(exito){
-                dato = JSON.stringify({"nombre_producto":nombre_producto, "precio_producto":precio_producto, "categoria_producto":categoria_producto, "url_imagen":nombre_imagen_producto,"imagen_extra":imagen_extra, "descripcion_producto":descripcion_producto.toString() })
+                dato = JSON.stringify({"nombre_producto":nombre_producto, "precio_producto":precio_producto, "categoria_producto": categoria_producto , "url_imagen":nombre_imagen_producto,"imagen_extra":imagen_extra, "descripcion_producto":descripcion_producto.toString() , "cat":categoria_producto })
 
                 $.ajax({
                 url: "{{url_for('agregar_producto')}}",
@@ -460,7 +467,7 @@
             });
             }else{
                 alert('algun dato erroneo, revise sus datos igresados')
-            }
+            } 
             
         }
         function guardar_cambios(){

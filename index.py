@@ -21,13 +21,15 @@ def agregar_producto():
     if request.method == 'POST':
         print('ingresando producto ...')
         dato = request.json
-
+        
         Producto.registrar(dato)
         return jsonify(data = True, mensaje = "Producto: " + dato['nombre_producto'] + " Agregado con exito.")      
 
-    categorias = Categoria.obtener_inferiores()
+    #categorias = Categoria.obtener_inferiores()
+    categoria  = Categoria.obtener_categorias_arbol()
+
     print('vista agregar producto')
-    return render_template('agregar_producto.html' , categorias = categorias)
+    return render_template('agregar_producto.html' , categorias = categoria )
 
   
 @app.route('/modificar/producto/<int:producto_id>', methods=['POST', 'GET'])
@@ -71,8 +73,19 @@ def agregar_categoria():
          
     print('se muestra la vista get')
     categorias_superiores = Categoria.obtener_superiores()
+    #v2
+    categorias = Categoria.obtener_categoriasv2()
+    return render_template('agregar_categoria.html' , vista = 'agregar' ,superiores = categorias_superiores , categorias = categorias)
 
-    return render_template('agregar_categoria.html' , vista = 'agregar' ,superiores = categorias_superiores)
+@app.route('/agregar/categoria/v2' , methods=['POST', 'GET'])
+def agregar_categoria_v2():
+    if request.method == 'POST':
+        print('ingresando CATEGORIA v2...')
+        dato = request.json
+        print(dato)
+        Categoria.registrar_categorias_v2(dato)
+        categorias = Categoria.obtener_categoriasv2()
+        return render_template('categoria.html', categorias= categorias )
 
 @app.route('/categoria/modificar/<string:id>' , methods = ['POST', 'GET'])
 def modificar_categoria(id = None):

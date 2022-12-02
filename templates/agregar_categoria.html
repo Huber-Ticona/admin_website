@@ -82,7 +82,12 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div id="body_categorias">
+        {% include 'categoria.html' %}
+        </div>
+        </div>
             {% if categoria %} 
             
             <script>
@@ -205,10 +210,51 @@
                     }
                 }
                 
-
+                $('#cat_padre').change(function(e){
+                    let nivel_x = parseInt($(this).children(':selected').attr('id'))
+                    let padre_x = parseInt($('#cat_padre').val())
+                    if(padre_x != 0){
+                        nivel_x = nivel_x + 1
+                    }
+                    $('#cat_nivel').val(nivel_x)
+                    console.log(nivel_x)
+                })
+                    function regcat(){
+                        console.log('--- registrando -----')
+        
+                        let nivel =  parseInt($('#cat_padre').children(':selected').attr('id'))
+                        let padre = parseInt($('#cat_padre').val())
+                        if(padre != 0){
+                            nivel = nivel + 1
+                        }
+                        let nombre = $('#cat_nombre').val()
+        
+                        let dict =  {"nivel":nivel , 
+                        "padre_id": padre, 
+                        "nombre_categoria": nombre }
+        
+                        console.log(dict)
+                        if(nombre != ''){
+                        $.ajax({
+                            url: "{{url_for('agregar_categoria_v2')}}",
+                            type: 'post',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(dict),
+                            success: function (resp) {
+                                if(resp){
+                                    $('#body_categorias').empty()
+                                    $('#body_categorias').append(resp)
+                                }
+                            }
+                        });
+                        }else{
+                            alert('Campo nombre ncesario')
+                        }
+        
+                        console.log('--- registrando END-----')
+                    }
             </script>
-        </div>
-    </div>
+        
 
 
         

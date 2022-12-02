@@ -11,9 +11,18 @@ class Producto():
                 print('------ REGISTRANDO PRODUCTO ------')
 
                 print(datos)
-                sql = "INSERT INTO producto(nombre,categoria,precio,url_imagen,imagen_extra,descripcion) VALUES(%s,%s,%s,%s,%s,%s)"
+                cates = datos['cat'].split(',')
+                cates =  [int(x) for x in cates]
+                print(cates)
+                detalle = json.dumps({
+                    'categoria':cates,
+                    'descripcion':datos['descripcion_producto']
+                })
+                cates= json.dumps(cates)
+                print(detalle)
+                sql = "INSERT INTO producto(nombre,categoria,precio,url_imagen,imagen_extra,descripcion,detalle) VALUES(%s,%s,%s,%s,%s,%s,%s)"
 
-                cursor.execute( sql ,( datos['nombre_producto'], datos['categoria_producto'], datos['precio_producto'],datos['url_imagen'],datos['imagen_extra'],datos['descripcion_producto']) )
+                cursor.execute( sql ,( datos['nombre_producto'], cates , datos['precio_producto'],datos['url_imagen'],datos['imagen_extra'],datos['descripcion_producto'],detalle) )
                 print('-'*15)
                 miConexion.commit()
 
@@ -37,7 +46,7 @@ class Producto():
                 resultado = list(cursor.fetchall())
                 r = json.dumps(resultado)
                 resultado = json.loads(r)
-                print(resultado)
+                #print(resultado)
                 
                 print('-'*15)
                 return resultado
