@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block encabezado %}
+    <title>Productos</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <p>productos</p>
+        {% if vista == 'modificar' %}
+        <p>Seleccione el producto a modificar</p>
+        {% elif vista == 'eliminar' %}
+        <p>Seleccione el producto a eliminar</p>
+        {% endif %}
+
+    </div>
+{% endblock %}

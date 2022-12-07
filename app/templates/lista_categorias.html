@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block encabezado %}
+<link rel="stylesheet" href="{{url_for('static', filename= 'css/inicio.css')}}">
+<title>Lista Categorias</title>
+
+
+{% endblock %}
+
+{% block contenido %}
+
+<div class="container-fluid">
+
+  <h1>lista categorias</h1>
+
+
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nombre categoria</th>
+        <th scope="col">Accion</th>
+        <th scope="col">Nivel</th>
+      </tr>
+    </thead>
+
+    <tbody id="cuerpo-tabla-categorias">
+    {% for item in categorias %}
+      <tr>
+        <td>{{item.categoria_id}}</td>
+        <td>{{item.nombre}}</td>
+        <td>
+          <a class="btn btn-primary" href="/categoria/modificar/{{item.categoria_id}}">Modificar</a>
+          <button class="btn btn-primary" onclick="eliminar_categoria('{{item.categoria_id}}')">Eliminar</button>
+        </td>
+        <td>{{item.nivel}}</td>
+      </tr>
+    {% endfor %} 
+    </tbody>
+  </table>
+  <br>
+
+  <script>
+   
+    function eliminar_categoria(id){
+      var userselection = confirm("¿Seguro eliminar la categoria seleccionada?");
+      if (userselection == true){
+        let url = "/categoria/eliminar/"+ id
+        $.get(url, function xd(resp){
+          console.log(resp)
+        });
+        }
+    }
+  </script>
+</div>
+
+{% endblock %}
