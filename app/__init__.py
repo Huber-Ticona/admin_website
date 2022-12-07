@@ -11,7 +11,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.secret_key = 'madenco_website_2022'
 
-    UPLOAD_FOLDER = r'../test_migrate/app/Productos'
+    UPLOAD_FOLDER = os.path.abspath('../../Productos2')
 
     print(UPLOAD_FOLDER)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

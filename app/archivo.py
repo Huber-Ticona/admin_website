@@ -27,23 +27,27 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            print(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             flash('Imagen subida correctamente')
 
     return render_template('agregar_imagen.html')
 
 
-@archivo_bp.route('/test', methods=['GET', 'POST'])
+@archivo_bp.route('/test', methods=['GET'])
 def test():
-
-    print(current_app.config["UPLOAD_FOLDER"])
+    print(' (.) : ', os.listdir('.') )
+    #print(' (abspath(os.getcwd())) : ', os.path.abspath(os.getcwd()) )
+    print(' (app/productos) : ', os.listdir('app/Productos') )
+    #print(' (escritorio) : ', os.listdir('') )
+    print(' (../) : ', os.listdir('../') )
+    print(' (../../Productos2) : ', os.listdir('../../Productos2') )
     y = os.listdir(current_app.config["UPLOAD_FOLDER"])
-    print(y)
-    return '<ul><li>xd</li></ul>'
+    #print(y)
+    return '<h1>TE LA CREISTE</h1>'
 
 @archivo_bp.route('/imagenes', methods=['POST'])
 def imagenes():
-
     imagenes = os.listdir(current_app.config["UPLOAD_FOLDER"])
     print(imagenes)
     return render_template('block_imagenes.html', imagenes = imagenes)
@@ -52,6 +56,6 @@ def imagenes():
 @archivo_bp.route('/imagen-producto/<string:nombre>')
 def imagen_producto(nombre = None):
 	try:
-		return send_file('Productos/' + nombre , download_name = nombre)
+		return send_from_directory( current_app.config['UPLOAD_FOLDER'] , nombre )
 	except Exception as e:
 		return str(e)
