@@ -3,12 +3,13 @@ import os
 from .routes import main
 from .archivo import archivo_bp
 from .extensions import db , migrate 
+from .config import DevelopConfig,ProductionConfig
 
-def create_app(test_config = None):
+def create_app():
     app = Flask(__name__)
-    
+
     # Se carga la configuracion
-    app.config.from_object(test_config)
+    app.config.from_object(DevelopConfig)
     
     UPLOAD_FOLDER = os.path.abspath('../Productos')
     print(UPLOAD_FOLDER)
