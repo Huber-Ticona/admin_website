@@ -4,15 +4,13 @@ from .routes import main
 from .archivo import archivo_bp
 from .extensions import db , migrate 
 
-def create_app():
+def create_app(test_config = None):
     app = Flask(__name__)
-
-    app.config['SQLALCHEMY_DATABASE_URI']= 'mysql+pymysql://root:huber123@localhost/madenco_web'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.secret_key = 'madenco_website_2022'
-
+    
+    # Se carga la configuracion
+    app.config.from_object(test_config)
+    
     UPLOAD_FOLDER = os.path.abspath('../Productos')
-
     print(UPLOAD_FOLDER)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -26,6 +24,6 @@ def create_app():
     # Registramos los blueprints
     app.register_blueprint(archivo_bp)
     app.register_blueprint(main)
-
+    
 
     return app
