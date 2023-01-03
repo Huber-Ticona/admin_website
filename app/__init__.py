@@ -25,6 +25,8 @@ def create_app():
     # Registramos los blueprints
     app.register_blueprint(archivo_bp)
     app.register_blueprint(main)
+
+    # si no existe la db , la crea y crea las tablas. tambien hace que sea visible globalmente en la aplicacion
     
 
     return app

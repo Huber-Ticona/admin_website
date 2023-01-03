@@ -110,11 +110,12 @@
                 function regcat(){
                     console.log('--- registrando -----')
     
-                    let nivel =  parseInt($('#cat_padre').children(':selected').attr('id'))
+                    let nivel =  parseInt($('#cat_padre').children(':selected').attr('id')) // nivel 0: raiz
                     let padre = parseInt($('#cat_padre').val())
-                    if(padre != 0){
-                        nivel = nivel + 1
-                    }
+                    if(padre != 0){ // 0: no tiene padre -> es raiz | caso contrario, si tiene padre_id
+                        nivel = nivel + 1 // la nueva catetgoria es 1 nivel mas alto que el padre
+                    }else{padre = null } //-> categoria raiz
+
                     let nombre = $('#cat_nombre').val()
                     let dict =  {
                         "nombre_categoria": nombre,
@@ -156,7 +157,7 @@
                     let padre = parseInt($('#cat_padre').val())
                     if(padre != 0){
                         nivel = nivel + 1
-                    }
+                    }else { padre = null }
                     let nombre = $('#cat_nombre').val()
                     let dict =  {
                         "nombre_categoria": nombre,

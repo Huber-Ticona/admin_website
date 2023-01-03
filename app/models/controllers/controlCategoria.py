@@ -1,5 +1,4 @@
 from ...extensions import obtener_conexion
-
 class control_Categoria():
 
     @classmethod
@@ -53,6 +52,39 @@ class control_Categoria():
                 #r = json.dumps(resultado)
                 #resultado = json.loads(r)
                 print(resultado)
+                
+                print('-'*15)
+                return resultado
+
+        except Exception as ex:
+            raise Exception(ex)
+        finally:
+            miConexion.close()
+
+    @classmethod
+    def obtener_rutas(self):
+        miConexion = obtener_conexion()
+        try:
+            with miConexion.cursor() as cursor:
+                print('------ OBTENIENDO RUTAS  ------')
+                sql = '''
+                WITH RECURSIVE rutas (categoria_id, nombre, nivel, ruta) AS (
+                SELECT c.categoria_id, c.nombre, c.nivel, c.nombre
+                FROM categoria c
+                WHERE c.padre_id IS NULL
+                UNION ALL
+                SELECT c.categoria_id, c.nombre, c.nivel, CONCAT(r.ruta, '/', c.nombre)
+                FROM categoria c
+                INNER JOIN rutas r ON c.padre_id = r.categoria_id
+                )
+                SELECT r.categoria_id, r.nombre, r.nivel, r.ruta
+                FROM rutas r;
+                '''
+                cursor.execute( sql )
+                resultado = cursor.fetchall()
+                #r = json.dumps(resultado)
+                #resultado = json.loads(r)
+                #print(resultado)
                 
                 print('-'*15)
                 return resultado
