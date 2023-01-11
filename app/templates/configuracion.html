@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block encabezado %}
+<link rel="stylesheet" href="{{url_for('static', filename= 'css/configuracion.css')}}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;1,100;1,300;1,400&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <div class="panel-contenido">
+        <h1>Memoria</h1>
+        {% if dicc['memoria'] %}
+        {% set memoria = dicc['memoria'] %}
+        <h3>Memoria total : {{ "{:.2f}".format(memoria['total']) }} GB</h3>
+        <h3>Memoria usada : {{ "{:.2f}".format(memoria['usado']) }} GB</h3>
+        <h3>Memoria libre : {{ "{:.2f}".format(memoria['libre']) }} GB</h3>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

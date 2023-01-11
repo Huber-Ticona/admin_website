@@ -8,9 +8,13 @@ from .config import DevelopConfig,ProductionConfig
 def create_app():
     app = Flask(__name__)
 
-    # Se carga la configuracion
-    app.config.from_object(DevelopConfig)
-    
+
+    # CARGA CONFIGURACION
+    if app.config['ENV'] == 'development':
+        app.config.from_object(DevelopConfig)
+    else:
+        app.config.from_object(ProductionConfig)
+
     UPLOAD_FOLDER = os.path.abspath('../Productos')
     print(UPLOAD_FOLDER)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

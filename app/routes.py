@@ -4,6 +4,7 @@ from .models.entities.models import Categoria, Producto
 from .models.controllers.controlCategoria import control_Categoria
 from .models.controllers.controlProducto import control_Producto
 from .extensions import db
+import psutil
 
 main = Blueprint('main', __name__ )
 
@@ -61,7 +62,7 @@ def visualizar_producto():
 @main.route('/eliminar/producto/<int:id>')
 def eliminar_producto(id= None):
     print(f'------- eliminando producto {id}')
-    Producto.eliminar(id)
+    control_Producto.eliminar(id)
     print('-'*15)
     return jsonify( data = True, mensaje = 'PRODUCTO ELIMINADO CORRECTAMENTE')
 
@@ -125,6 +126,33 @@ def eliminar_categoria(id = None):
 def visualizar_categorias():
     lista_categorias = Categoria.query.order_by(Categoria.nivel.asc()).all()
     return render_template('lista_categorias.html' , categorias = lista_categorias)
+
+@main.route('/configuracion')
+def configuracion():
+    if request.method == 'post':
+
+        print('------ OBTENIENDO CONFIGURACION: {} --------')
+
+        
+    dicc = {}
+    disk = psutil.disk_usage("C:")
+
+    memoria = {
+    'total' : disk.total / (1024.0 ** 3),
+    'usado' : disk.used / (1024.0 ** 3),
+    'libre' : disk.free / (1024.0 ** 3)
+    }
+    dicc['memoria'] = memoria
+
+    print("Total: ", disk.total / (1024.0 ** 3), "GB")
+    print("Used: ", disk.used / (1024.0 ** 3), "GB")
+    print("Free: ", disk.free / (1024.0 ** 3), "GB")
+
+    #NUCLEOS
+    print("Number of cores in system", psutil.cpu_count())
+
+    return render_template('configuracion.html', dicc = dicc)
+
 
 @main.errorhandler(404)
 def error(e):
