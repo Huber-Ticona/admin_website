@@ -2,7 +2,7 @@
 class Config(object):
     TEMPLATE_AUTO_RELOAD = True
     SECRET_KEY = 'maderas_enco_2023'
-    app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024 # 20 MB
+    MAX_CONTENT_LENGTH = 20 * 1024 * 1024 # 20 MB
     
 class DevelopConfig(Config):
     # BASE DE DATOS
