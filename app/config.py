@@ -1,6 +1,7 @@
 
 class Config(object):
     TEMPLATE_AUTO_RELOAD = True
+    SECRET_KEY = 'maderas_enco_2023'
     
 class DevelopConfig(Config):
     # BASE DE DATOS
