@@ -5,7 +5,7 @@ from flask import current_app
 from .models.controllers.controlCategoria import control_Categoria
 
 archivo_bp = Blueprint('archivo_bp', __name__ , static_folder='static' , template_folder='templates')
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','jfif'} # EXTENSIONES DISPONIBLES PARA  LAS IMAGENES DE PRODUCTOS.
 
 def allowed_file(filename):
     return '.' in filename and \
